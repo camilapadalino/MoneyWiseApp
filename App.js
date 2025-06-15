@@ -2,7 +2,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// Import das telas
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Dashboard from './screens/Dashboard';

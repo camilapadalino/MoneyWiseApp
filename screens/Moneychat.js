@@ -21,12 +21,10 @@ export default function Moneychat({ navigation }) {
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 20 }}>
-          {/* Mensagem do usuário */}
           <View style={styles.bolhaUsuario}>
             <Text style={styles.textoBolha}>Quero investir tudo em criptomoeda. É uma boa?</Text>
           </View>
 
-          {/* Resposta da IA */}
           <View style={styles.bolhaIA}>
             <Text style={styles.textoBolhaIA}>
               Investir tudo em um único ativo, como criptomoeda, pode ser muito arriscado.{"\n"}
@@ -34,7 +32,6 @@ export default function Moneychat({ navigation }) {
             </Text>
           </View>
 
-          {/* Sugestões rápidas */}
           <View style={styles.sugestoes}>
             <TouchableOpacity style={styles.botaoSugestao}>
               <Text style={styles.textoSugestao}>Me explique sobre renda fixa</Text>
