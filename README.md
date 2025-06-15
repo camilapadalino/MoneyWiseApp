@@ -1,6 +1,6 @@
 # 💼 MoneyWise
 
-> Um aplicativo feito com ReactNative educativo que ajuda usuários a entenderem a diferença entre investir e apostar — com foco em decisões financeiras conscientes e saudáveis.
+> Um aplicativo educativo que ajuda usuários a entenderem a diferença entre investir e apostar — com foco em decisões financeiras conscientes e saudáveis.
 
 ---
 
