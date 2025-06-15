@@ -48,10 +48,10 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24
+    padding: 50,
   },
   label: {
-    fontSize: 16,
+    fontSize: 20,
     marginBottom: 6,
     color: '#333'
   },
@@ -60,17 +60,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#ddd',
     paddingHorizontal: 12,
-    marginBottom: 20
+    marginBottom: 50
   },
   button: {
     backgroundColor: '#A66A6A',
-    paddingVertical: 12,
+    paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center'
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 30,
     fontWeight: '500'
   },
   secondaryButton: {

@@ -46,11 +46,11 @@ export default function Moneychat({ navigation }) {
           </View>
         </ScrollView>
 
-        {/* Campo de digitação + botão */}
+        
         <View style={styles.entradaContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Digite sua pergunta..."
+            placeholder="Moneychat em breve!"
             value={mensagem}
             onChangeText={setMensagem}
           />
@@ -71,6 +71,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff'
   },
+  input:{
+    fontWeight: 'bold'
+  },
   chatContainer: {
     flex: 1,
     paddingHorizontal: 16,
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 10,
     maxWidth: '80%'
+    
   },
   bolhaIA: {
     backgroundColor: '#FAD3D3',
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%'
   },
   textoBolha: {
-    color: '#fff',
+    color: '#333',
     fontSize: 14
   },
   textoBolhaIA: {

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+
 export default function Header({ title, showBack = false, onBack }) {
   return (
     <View style={styles.header}>
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 30,
+  
   }
 });

@@ -47,18 +47,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   subtitle: {
-    fontSize: 18,
-    marginBottom: 40
+    fontSize: 25,
+    marginBottom: 40,
+    padding: 50
   },
   button: {
     backgroundColor: '#A66A6A',
-    paddingHorizontal: 30,
-    paddingVertical: 12,
+    paddingHorizontal: 50,
+    paddingVertical: 15,
     borderRadius: 10,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 30,
     fontWeight: '500'
   }
 });

@@ -24,6 +24,13 @@ export default function Dashboard({ navigation }) {
           </Text>
         </View>
 
+        <View style={styles.devAviso}>
+          <Text style={styles.devEmoji}>🚧</Text>
+          <Text style={styles.devTexto}>
+            O Moneychat ainda está em desenvolvimento. Em breve, ele responderá suas perguntas com ainda mais precisão!
+          </Text>
+        </View>
+
         <TouchableOpacity
           style={styles.botao}
           onPress={() => navigation.navigate('Moneychat')}
@@ -31,9 +38,6 @@ export default function Dashboard({ navigation }) {
           <Text style={styles.botaoTexto}>Falar com o Moneychat</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.botaoSecundario}>
-          <Text style={styles.botaoTextoSecundario}>Voltar</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -44,10 +48,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 20
+    
   },
   greeting: {
-    fontSize: 16,
-    marginBottom: 20
+    fontSize: 18,
+    marginBottom: 20,
+    color: '#A66A6A',
+    fontWeight: 'bold'
+    
   },
   cardSaldo: {
     backgroundColor: '#FFD6D6',
@@ -56,23 +64,25 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   saldoTitulo: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#333',
     marginBottom: 4
   },
   saldoValor: {
-    fontSize: 28,
+    fontSize: 35,
     fontWeight: 'bold',
-    color: '#000'
+    color: '#000',
+    textAlign: 'center'
   },
   rentabilidade: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#444',
-    marginTop: 4
+    marginTop: 4,
+    textAlign: 'center'
   },
   alerta: {
     flexDirection: 'row',
-    backgroundColor: '#F9F1A5',
+    backgroundColor: '#D0A5A5',
     borderRadius: 8,
     padding: 12,
     alignItems: 'flex-start',
@@ -83,20 +93,40 @@ const styles = StyleSheet.create({
     marginRight: 8
   },
   alertaTexto: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: 'bold',
     color: '#333',
+    flex: 1
+  },
+  devAviso: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF3C4',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+    alignItems: 'flex-start'
+  },
+  devEmoji: {
+    fontSize: 18,
+    marginRight: 8
+  },
+  devTexto: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: 'bold',
     flex: 1
   },
   botao: {
     backgroundColor: '#A66A6A',
     paddingVertical: 12,
     borderRadius: 10,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 30
   },
   botaoTexto: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '500'
+    fontSize: 25,
+    fontWeight: '500',
   },
   botaoSecundario: {
     marginTop: 16,

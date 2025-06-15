@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../Header';
 
 export default function Trilhas({ navigation }) {
-  // Estados para controle dos cards
   const [showResposta1, setShowResposta1] = useState(false);
   const [showResposta2, setShowResposta2] = useState(false);
 
@@ -15,7 +14,6 @@ export default function Trilhas({ navigation }) {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.subtitulo}>Selecione o card para revelar a resposta!</Text>
 
-        {/* CARD 1 */}
         <TouchableOpacity
           style={styles.cardPergunta}
           onPress={() => setShowResposta1(!showResposta1)}
@@ -32,7 +30,6 @@ export default function Trilhas({ navigation }) {
           </View>
         )}
 
-        {/* CARD 2 */}
         <TouchableOpacity
           style={styles.cardPergunta}
           onPress={() => setShowResposta2(!showResposta2)}
@@ -49,7 +46,6 @@ export default function Trilhas({ navigation }) {
         )}
       </ScrollView>
 
-      {/* Botões de navegação */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.botao}
@@ -60,7 +56,7 @@ export default function Trilhas({ navigation }) {
 
         <TouchableOpacity
           style={styles.botao}
-          onPress={() => navigation.navigate('Onboarding')}
+          onPress={() => navigation.navigate('Home')}
         >
           <Text style={styles.botaoTexto}>Home</Text>
         </TouchableOpacity>
@@ -111,12 +107,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 10,
     marginBottom: 12,
-    width: 200,
+    width: 250,
     alignItems: 'center'
   },
   botaoTexto: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 25,
     fontWeight: 'bold'
   }
 });
