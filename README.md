@@ -31,6 +31,11 @@
 
 ---
 
+## 🧠 Como o app combate comportamentos de aposta
+O MoneyWise atua diretamente na conscientização financeira ao identificar comportamentos de risco, como alocações impulsivas ou investimentos concentrados, e oferece orientações educativas via IA (Moneychat), alertas visuais no dashboard e conteúdos interativos sobre risco e retorno. Assim, o app transforma o ato de investir em uma experiência consciente e planejada, reduzindo apostas disfarçadas de decisões financeiras.
+
+---
+
 ## ✨ Funcionalidades
 
 - ✅ Login e autenticação simulada
