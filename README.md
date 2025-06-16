@@ -34,6 +34,7 @@
 ## ✨ Funcionalidades
 
 - ✅ Login e autenticação simulada
+- ✅ Cadastro do usuário para utilização do aplicativo
 - ✅ Dashboard com saldo e rentabilidade
 - ✅ Alertas personalizados sobre riscos
 - ✅ IA educativa (Moneychat) com linguagem simples
