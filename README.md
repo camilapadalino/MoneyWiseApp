@@ -15,8 +15,8 @@
 ## 🖼️ Protótipo no Figma
 
 > [Acesse o design aqui](https://www.figma.com/proto/JWp8bp8wZR4vII4Y3cy529/MoneyWise-App?node-id=3-2&t=Ai8ybSaRkaZMok2K-1)
-
 ![MoneyWise Preview](./assets/MoneyWise%20App.jpg)
+
 ---
 
 ## 📱 Sobre o App
