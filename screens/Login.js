@@ -1,44 +1,71 @@
 import React, { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, StyleSheet, View } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../Header';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
+  const salvarUsuario = async () => {
+    if (!email || !senha) return Alert.alert('Preencha todos os campos!');
+    try {
+      await AsyncStorage.setItem('usuario', JSON.stringify({ email, senha }));
+      Alert.alert('Cadastro realizado com sucesso!');
+      setEmail('');
+      setSenha('');
+    } catch (error) {
+      Alert.alert('Erro ao salvar usuário');
+    }
+  };
+
+  const autenticarUsuario = async () => {
+    try {
+      const dados = await AsyncStorage.getItem('usuario');
+      if (dados) {
+        const { email: salvo, senha: salva } = JSON.parse(dados);
+        if (email === salvo && senha === salva) {
+          navigation.navigate('Dashboard');
+        } else {
+          Alert.alert('E-mail ou senha incorretos');
+        }
+      } else {
+        Alert.alert('Usuário não encontrado. Cadastre-se primeiro.');
+      }
+    } catch (error) {
+      Alert.alert('Erro ao autenticar');
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-     <Header
-        title="Login"
-        showBack={true}
-        onBack={() => navigation.navigate('Home')}/>
+      <Header title="Login" showBack={true} onBack={() => navigation.goBack()} />
 
       <View style={styles.container}>
-        <Text style={styles.label}>E-mail</Text>
+        <Text style={styles.label}>E-mail:</Text>
         <TextInput
           style={styles.input}
           placeholder="Digite seu e-mail"
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
         />
 
-        <Text style={styles.label}>Senha</Text>
+        <Text style={styles.label}>Senha:</Text>
         <TextInput
           style={styles.input}
           placeholder="Digite sua senha"
-          secureTextEntry
           value={senha}
           onChangeText={setSenha}
+          secureTextEntry
         />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Dashboard')}
-        >
-          <Text style={styles.buttonText}>Entrar</Text>
+        <TouchableOpacity style={styles.botao} onPress={autenticarUsuario}>
+          <Text style={styles.botaoTexto}>Entrar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.cadastrarbotao} onPress={() => navigation.navigate('Cadastro')}>
+          <Text style={styles.link}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -47,13 +74,12 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 50,
+    padding: 20
   },
   label: {
-    fontSize: 20,
-    marginBottom: 6,
-    color: '#333'
+    fontSize: 16,
+    marginTop: 10,
+    marginBottom: 4
   },
   input: {
     height: 45,
@@ -62,24 +88,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 50
   },
-  button: {
+  botao: {
     backgroundColor: '#A66A6A',
-    paddingVertical: 15,
+    marginTop: 20,
+    padding: 12,
     borderRadius: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  buttonText: {
+  botaoTexto: {
     color: '#fff',
-    fontSize: 30,
-    fontWeight: '500'
+    fontWeight: 'bold',
+    fontSize: 20
   },
-  secondaryButton: {
-    marginTop: 16,
-    alignItems: 'center'
+  cadastrarbotao: {
+    backgroundColor: '#A66A6A',
+    marginTop: 20,
+    padding: 12,
+    borderRadius: 10,
   },
-  secondaryText: {
-    color: '#A66A6A',
-    fontSize: 16,
-    fontWeight: '500'
+  link: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
+    textAlign: 'center'
   }
 });

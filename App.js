@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Home from './screens/Home';
 import Login from './screens/Login';
+import Cadastro from './screens/Cadastro';
 import Dashboard from './screens/Dashboard';
 import Moneychat from './screens/Moneychat';
 import Trilhas from './screens/Trilhas';
@@ -16,6 +17,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Home">
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Cadastro" component={Cadastro} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Moneychat" component={Moneychat} />
         <Stack.Screen name="Trilhas" component={Trilhas} />

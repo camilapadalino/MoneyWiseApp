@@ -1,20 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../Header';
 
 export default function Dashboard({ navigation }) {
+  const [nome, setNome] = useState('');
+  const [renda, setRenda] = useState('');
+
+  useEffect(() => {
+    const carregarDados = async () => {
+      try {
+        const dados = await AsyncStorage.getItem('dadosUsuario');
+        if (dados) {
+          const { nome, renda } = JSON.parse(dados);
+          setNome(nome);
+          setRenda(renda);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    };
+
+    carregarDados();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Header title="Dashboard" showBack={true} onBack={() => navigation.goBack()} />
 
       <View style={styles.container}>
-        <Text style={styles.greeting}>Olá! Vamos acompanhar sua carteira hoje?</Text>
+        <Text style={styles.greeting}>Olá, {nome?.split(' ')[0]}! Vamos acompanhar sua carteira hoje?</Text>
 
         <View style={styles.cardSaldo}>
-          <Text style={styles.saldoTitulo}>Saldo Total</Text>
-          <Text style={styles.saldoValor}>R$ 55.000</Text>
-          <Text style={styles.rentabilidade}>Rentabilidade de 5,2% no mês</Text>
+          <Text style={styles.saldoTitulo}>Renda mensal</Text>
+          <Text style={styles.saldoValor}>R$ {renda || '----'}</Text>
+          <Text style={styles.rentabilidade}>Rentabilidade de X,X% no mês</Text>
         </View>
 
         <View style={styles.alerta}>
@@ -37,7 +58,6 @@ export default function Dashboard({ navigation }) {
         >
           <Text style={styles.botaoTexto}>Falar com o Moneychat</Text>
         </TouchableOpacity>
-
       </View>
     </SafeAreaView>
   );
@@ -48,14 +68,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 20
-    
   },
   greeting: {
     fontSize: 18,
     marginBottom: 20,
     color: '#A66A6A',
     fontWeight: 'bold'
-    
   },
   cardSaldo: {
     backgroundColor: '#FFD6D6',
