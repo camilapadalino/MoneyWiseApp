@@ -26,7 +26,7 @@ export default function Login({ navigation }) {
       if (dados) {
         const { email: salvo, senha: salva } = JSON.parse(dados);
         if (email === salvo && senha === salva) {
-          navigation.navigate('Dashboard');
+          navigation.replace('Main', { screen: 'Dashboard' });
         } else {
           Alert.alert('E-mail ou senha incorretos');
         }
