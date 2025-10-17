@@ -1,35 +1,143 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Alert,
+  ActivityIndicator,
+  ScrollView
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../Header';
+import { 
+  buscarDadosUsuario, 
+  fazerLogout, 
+  excluirUsuario,
+  observarEstadoAutenticacao 
+} from '../services/userService';
 
 export default function Dashboard({ navigation }) {
   const [nome, setNome] = useState('');
   const [renda, setRenda] = useState('');
+  const [carregando, setCarregando] = useState(true);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const carregarDados = async () => {
-      try {
-        const dados = await AsyncStorage.getItem('dadosUsuario');
-        if (dados) {
-          const { nome, renda } = JSON.parse(dados);
-          setNome(nome);
-          setRenda(renda);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
+    // Observa mudanças no estado de autenticação
+    const unsubscribe = observarEstadoAutenticacao((user) => {
+      if (user) {
+        setUserId(user.uid);
+        carregarDados(user.uid);
+      } else {
+        // Usuário não está autenticado, navega para o login
+        navigation.replace('Login');
       }
-    };
+    });
 
-    carregarDados();
-  }, []);
+    return () => unsubscribe();
+  }, [navigation]);
+
+  const carregarDados = async (uid) => {
+    try {
+      setCarregando(true);
+      const resultado = await buscarDadosUsuario(uid);
+
+      if (resultado.sucesso) {
+        const { nome, renda } = resultado.dados;
+        setNome(nome);
+        setRenda(renda);
+      } else {
+        Alert.alert('Erro', 'Não foi possível carregar seus dados.');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      Alert.alert('Erro', 'Erro ao carregar dados. Verifique sua conexão.');
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sair',
+      'Deseja realmente sair da sua conta?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Sair',
+          onPress: async () => {
+            const resultado = await fazerLogout();
+            if (resultado.sucesso) {
+              navigation.replace('Login');
+            } else {
+              Alert.alert('Erro', 'Erro ao fazer logout. Tente novamente.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleEditarPerfil = () => {
+    // Navega para a tela de edição de perfil
+    navigation.navigate('EditarPerfil', { userId, nome, renda });
+  };
+
+  const handleExcluirConta = () => {
+    Alert.alert(
+      'Excluir Conta',
+      'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            setCarregando(true);
+            const resultado = await excluirUsuario(userId);
+            setCarregando(false);
+
+            if (resultado.sucesso) {
+              Alert.alert(
+                'Conta Excluída',
+                'Sua conta foi excluída com sucesso.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => navigation.replace('Login')
+                  }
+                ]
+              );
+            } else {
+              Alert.alert('Erro', resultado.erro);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  if (carregando) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#A66A6A" />
+        <Text style={{ marginTop: 10, color: '#666' }}>Carregando...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <Header title="Dashboard" showBack={true} onBack={() => navigation.goBack()} />
+      <Header title="Dashboard" showBack={false} />
 
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.greeting}>Olá, {nome?.split(' ')[0]}! Vamos acompanhar sua carteira hoje?</Text>
 
         <View style={styles.cardSaldo}>
@@ -58,16 +166,40 @@ export default function Dashboard({ navigation }) {
         >
           <Text style={styles.botaoTexto}>Falar com o Moneychat</Text>
         </TouchableOpacity>
-      </View>
+
+        {/* Botões de gerenciamento de conta */}
+        <View style={styles.acoesContainer}>
+          <TouchableOpacity
+            style={styles.botaoSecundario}
+            onPress={handleEditarPerfil}
+          >
+            <Text style={styles.botaoSecundarioTexto}>Editar Perfil</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.botaoSecundario}
+            onPress={handleLogout}
+          >
+            <Text style={styles.botaoSecundarioTexto}>Sair</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.botaoSecundario, styles.botaoExcluir]}
+            onPress={handleExcluirConta}
+          >
+            <Text style={[styles.botaoSecundarioTexto, styles.botaoExcluirTexto]}>Excluir Conta</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 20
+    paddingTop: 20,
+    paddingBottom: 40
   },
   greeting: {
     fontSize: 18,
@@ -139,20 +271,35 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 30
+    marginTop: 10
   },
   botaoTexto: {
     color: '#fff',
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: '500',
   },
-  botaoSecundario: {
-    marginTop: 16,
-    alignItems: 'center'
+  acoesContainer: {
+    marginTop: 30,
+    gap: 12
   },
-  botaoTextoSecundario: {
+  botaoSecundario: {
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd'
+  },
+  botaoSecundarioTexto: {
     color: '#A66A6A',
     fontSize: 16,
     fontWeight: '500'
+  },
+  botaoExcluir: {
+    backgroundColor: '#ffe0e0',
+    borderColor: '#ffcccc'
+  },
+  botaoExcluirTexto: {
+    color: '#cc0000'
   }
 });

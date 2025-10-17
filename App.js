@@ -6,6 +6,7 @@ import Home from './screens/Home';
 import Login from './screens/Login';
 import Cadastro from './screens/Cadastro';
 import Dashboard from './screens/Dashboard';
+import EditarPerfil from './screens/EditarPerfil';
 import Moneychat from './screens/Moneychat';
 import Trilhas from './screens/Trilhas';
 
@@ -26,10 +27,11 @@ function TabRoutes() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={TabRoutes} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Cadastro" component={Cadastro} />
-        <Stack.Screen name="Main" component={TabRoutes} />
+        <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{ headerShown: true, title: 'Editar Perfil' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

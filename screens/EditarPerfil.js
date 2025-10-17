@@ -13,28 +13,25 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../Header';
-import { criarUsuario } from '../services/userService';
+import { atualizarUsuario, atualizarSenha } from '../services/userService';
 import { 
-  validarEmail, 
   validarDataNascimento, 
-  validarSenha, 
   validarRenda, 
-  validarNome 
+  validarNome,
+  validarSenha 
 } from '../utils/validations';
 
-export default function Cadastro({ navigation }) {
-  const [nome, setNome] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
-  const [renda, setRenda] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function EditarPerfil({ route, navigation }) {
+  const { userId, nome: nomeInicial, renda: rendaInicial } = route.params;
+
+  const [nome, setNome] = useState(nomeInicial || '');
+  const [renda, setRenda] = useState(rendaInicial || '');
+  const [novaSenha, setNovaSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
 
   // Estados para mensagens de erro específicas
   const [erroNome, setErroNome] = useState('');
-  const [erroData, setErroData] = useState('');
   const [erroRenda, setErroRenda] = useState('');
-  const [erroEmail, setErroEmail] = useState('');
   const [erroSenha, setErroSenha] = useState('');
 
   const validarCampos = () => {
@@ -42,20 +39,12 @@ export default function Cadastro({ navigation }) {
 
     // Limpa erros anteriores
     setErroNome('');
-    setErroData('');
     setErroRenda('');
-    setErroEmail('');
     setErroSenha('');
 
     // Valida nome
     if (!validarNome(nome)) {
       setErroNome('Nome deve ter pelo menos 3 caracteres');
-      valido = false;
-    }
-
-    // Valida data de nascimento
-    if (!validarDataNascimento(dataNascimento)) {
-      setErroData('Data inválida. Use o formato DD/MM/AAAA');
       valido = false;
     }
 
@@ -65,14 +54,8 @@ export default function Cadastro({ navigation }) {
       valido = false;
     }
 
-    // Valida e-mail
-    if (!validarEmail(email)) {
-      setErroEmail('E-mail inválido');
-      valido = false;
-    }
-
-    // Valida senha
-    if (!validarSenha(senha)) {
+    // Valida senha (se foi preenchida)
+    if (novaSenha && !validarSenha(novaSenha)) {
       setErroSenha('Senha deve ter pelo menos 6 caracteres');
       valido = false;
     }
@@ -80,10 +63,10 @@ export default function Cadastro({ navigation }) {
     return valido;
   };
 
-  const salvarCadastro = async () => {
-    // Verifica se todos os campos estão preenchidos
-    if (!nome || !dataNascimento || !renda || !email || !senha) {
-      Alert.alert('Atenção', 'Preencha todos os campos!');
+  const salvarAlteracoes = async () => {
+    // Verifica se todos os campos obrigatórios estão preenchidos
+    if (!nome || !renda) {
+      Alert.alert('Atenção', 'Preencha todos os campos obrigatórios!');
       return;
     }
 
@@ -96,32 +79,41 @@ export default function Cadastro({ navigation }) {
     setCarregando(true);
 
     try {
-      // Cria usuário no Firebase
-      const resultado = await criarUsuario({
+      // Atualiza dados do usuário no Firestore
+      const resultadoUsuario = await atualizarUsuario(userId, {
         nome,
-        dataNascimento,
-        renda,
-        email,
-        senha
+        renda
       });
 
-      if (resultado.sucesso) {
-        Alert.alert(
-          'Sucesso!',
-          'Cadastro realizado com sucesso!',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('Login')
-            }
-          ]
-        );
-      } else {
-        Alert.alert('Erro', resultado.erro);
+      if (!resultadoUsuario.sucesso) {
+        Alert.alert('Erro', resultadoUsuario.erro);
+        setCarregando(false);
+        return;
       }
+
+      // Se uma nova senha foi fornecida, atualiza a senha
+      if (novaSenha) {
+        const resultadoSenha = await atualizarSenha(novaSenha);
+        if (!resultadoSenha.sucesso) {
+          Alert.alert('Aviso', `Dados atualizados, mas houve um erro ao atualizar a senha: ${resultadoSenha.erro}`);
+          setCarregando(false);
+          return;
+        }
+      }
+
+      Alert.alert(
+        'Sucesso!',
+        'Perfil atualizado com sucesso!',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack()
+          }
+        ]
+      );
     } catch (error) {
-      Alert.alert('Erro', 'Erro ao salvar cadastro. Tente novamente.');
-      console.error('Erro no cadastro:', error);
+      Alert.alert('Erro', 'Erro ao atualizar perfil. Tente novamente.');
+      console.error('Erro ao atualizar perfil:', error);
     } finally {
       setCarregando(false);
     }
@@ -129,13 +121,17 @@ export default function Cadastro({ navigation }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <Header title="Cadastro" showBack={true} onBack={() => navigation.goBack()} />
+      <Header title="Editar Perfil" showBack={true} onBack={() => navigation.goBack()} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.descricao}>
+            Atualize suas informações abaixo. Deixe o campo de senha em branco se não quiser alterá-la.
+          </Text>
+
           <Text style={styles.label}>Nome completo:</Text>
           <TextInput
             style={[styles.input, erroNome ? styles.inputErro : null]}
@@ -148,21 +144,6 @@ export default function Cadastro({ navigation }) {
             editable={!carregando}
           />
           {erroNome ? <Text style={styles.textoErro}>{erroNome}</Text> : null}
-
-          <Text style={styles.label}>Data de nascimento:</Text>
-          <TextInput
-            style={[styles.input, erroData ? styles.inputErro : null]}
-            placeholder="DD/MM/AAAA"
-            value={dataNascimento}
-            onChangeText={(text) => {
-              setDataNascimento(text);
-              setErroData('');
-            }}
-            keyboardType="numeric"
-            maxLength={10}
-            editable={!carregando}
-          />
-          {erroData ? <Text style={styles.textoErro}>{erroData}</Text> : null}
 
           <Text style={styles.label}>Renda mensal (R$):</Text>
           <TextInput
@@ -178,29 +159,14 @@ export default function Cadastro({ navigation }) {
           />
           {erroRenda ? <Text style={styles.textoErro}>{erroRenda}</Text> : null}
 
-          <Text style={styles.label}>E-mail:</Text>
-          <TextInput
-            style={[styles.input, erroEmail ? styles.inputErro : null]}
-            placeholder="Digite seu e-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              setErroEmail('');
-            }}
-            editable={!carregando}
-          />
-          {erroEmail ? <Text style={styles.textoErro}>{erroEmail}</Text> : null}
-
-          <Text style={styles.label}>Senha:</Text>
+          <Text style={styles.label}>Nova senha (opcional):</Text>
           <TextInput
             style={[styles.input, erroSenha ? styles.inputErro : null]}
-            placeholder="Digite sua senha (mínimo 6 caracteres)"
+            placeholder="Digite uma nova senha (mínimo 6 caracteres)"
             secureTextEntry
-            value={senha}
+            value={novaSenha}
             onChangeText={(text) => {
-              setSenha(text);
+              setNovaSenha(text);
               setErroSenha('');
             }}
             editable={!carregando}
@@ -209,14 +175,22 @@ export default function Cadastro({ navigation }) {
 
           <TouchableOpacity 
             style={[styles.botao, carregando && styles.botaoDesabilitado]} 
-            onPress={salvarCadastro}
+            onPress={salvarAlteracoes}
             disabled={carregando}
           >
             {carregando ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.botaoTexto}>Salvar e continuar</Text>
+              <Text style={styles.botaoTexto}>Salvar Alterações</Text>
             )}
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.botaoCancelar} 
+            onPress={() => navigation.goBack()}
+            disabled={carregando}
+          >
+            <Text style={styles.botaoCancelarTexto}>Cancelar</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -227,6 +201,12 @@ export default function Cadastro({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20
+  },
+  descricao: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+    lineHeight: 20
   },
   label: {
     fontSize: 16,
@@ -262,6 +242,19 @@ const styles = StyleSheet.create({
   },
   botaoTexto: {
     color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  botaoCancelar: {
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#A66A6A'
+  },
+  botaoCancelarTexto: {
+    color: '#A66A6A',
     fontWeight: 'bold',
     fontSize: 16
   }
