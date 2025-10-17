@@ -45,10 +45,14 @@ O MoneyWise atua diretamente na conscientização financeira ao identificar comp
 - ✅ IA educativa (Moneychat) com linguagem simples
 - ✅ Trilhas com cards interativos de aprendizado
 
+---
+
 ## 🏗️ Arquitetura & Persistência
 
 O projeto foi **aprimorado** para usar **Firebase** como backend de autenticação e persistência (substituindo a persistência local).  
 As operações de **CRUD de usuário** são feitas via **serviço de API** integrado ao Firebase (Authentication + Firestore).
+
+---
 
 ## 👤 CRUD & Gerenciamento de Usuários
 
@@ -57,3 +61,13 @@ As operações de **CRUD de usuário** são feitas via **serviço de API** integ
 - **Leitura**: busca dados do usuário (ex.: nome, renda) no Firestore  
 - **Atualização**: **EditarPerfil** permite atualizar email/senha  
 - **Exclusão de conta**: remove do Authentication e apaga dados do Firestore
+
+---
+
+## ▶️ Execução
+
+```bash
+npm install
+npm install firebase @react-native-async-storage/async-storage @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs
+npx expo start
+```
