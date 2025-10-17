@@ -70,8 +70,6 @@ export default function Login({ navigation }) {
       const resultado = await autenticarUsuario(email, senha);
 
       if (resultado.sucesso) {
-        // A navegação será feita automaticamente pelo observador de estado
-        // navigation.replace('Main', { screen: 'Dashboard' });
       } else {
         Alert.alert('Erro ao fazer login', resultado.erro);
       }
