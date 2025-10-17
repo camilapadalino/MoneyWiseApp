@@ -1,6 +1,6 @@
 # 💼 MoneyWise
 
-> Um aplicativo educativo que ajuda usuários a entenderem a diferença entre investir e apostar — com foco em decisões financeiras conscientes e saudáveis.
+> Aplicativo mobile focado em **conscientização financeira**, ajudando usuários a diferenciar **investimento** de **aposta** por meio de conteúdo educativo, alertas de risco e um chat com **IA (Moneychat)**.
 
 ---
 
@@ -44,3 +44,16 @@ O MoneyWise atua diretamente na conscientização financeira ao identificar comp
 - ✅ Alertas personalizados sobre riscos
 - ✅ IA educativa (Moneychat) com linguagem simples
 - ✅ Trilhas com cards interativos de aprendizado
+
+## 🏗️ Arquitetura & Persistência
+
+O projeto foi **aprimorado** para usar **Firebase** como backend de autenticação e persistência (substituindo a persistência local).  
+As operações de **CRUD de usuário** são feitas via **serviço de API** integrado ao Firebase (Authentication + Firestore).
+
+## 👤 CRUD & Gerenciamento de Usuários
+
+- **Cadastro**: cria conta com email/senha (Authentication) e documento do usuário (Firestore)  
+- **Login**: autenticação via Firebase  
+- **Leitura**: busca dados do usuário (ex.: nome, renda) no Firestore  
+- **Atualização**: **EditarPerfil** permite atualizar email/senha  
+- **Exclusão de conta**: remove do Authentication e apaga dados do Firestore
